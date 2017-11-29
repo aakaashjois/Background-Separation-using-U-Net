@@ -3,3 +3,6 @@
 
 # Jupyter Notebook checkpoints
 /.ipynb_checkpoints
+
+# Mac finder data
+.DS_Store
