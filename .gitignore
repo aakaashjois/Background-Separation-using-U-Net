@@ -6,3 +6,7 @@
 
 # Mac finder data
 .DS_Store
+
+lib/\.ipynb_checkpoints/
+
+lib/__pycache__/
