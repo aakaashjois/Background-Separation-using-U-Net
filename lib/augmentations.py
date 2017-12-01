@@ -1,5 +1,9 @@
 import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.utils import shuffle
 from keras.preprocessing import image
+from keras.preprocessing.image import load_img, img_to_array
+
 
 def __flip__(x, axis=1):
     return np.flip(x, 1)
@@ -81,8 +85,27 @@ def __random_shear__(img, mask, intensity_range=(-0.5, 0.5), u=0.5,random_shear=
         mask = __shear__(mask, sh,rotate_dir = shear_rot)
     return img, mask
 
+def ____recreate_image____(codebook, labels, w, h):
+    d = codebook.shape[1]
+    image = np.zeros((w, h, d))
+    label_idx = 0
+    for i in range(w):
+        for j in range(h):
+            image[i][j] = codebook[labels[label_idx]]
+            label_idx += 1
+    return image
+
+def __color_quantize__(img, mask, target_colors):
+    img = img_to_array(img)
+    image_array = np.reshape(img, (img.shape[0] * img.shape[1], img.shape[2]))
+    image_array_sample = shuffle(image_array, random_state=0)[:1000]
+    kmeans = KMeans(n_clusters=target_colors, random_state=0).fit(image_array_sample)
+    labels = kmeans.predict(image_array)
+    return __recreate_image__(kmeans.cluster_centers_, labels, img.shape[0], img.shape[1]), mask
+
+
 def random_augmentation(img, 
-                        mask, 
+                        mask,
                         flip_chance=0, 
                         rotate_chance=0,
                         rotate_limit=(-20,20), 
@@ -93,15 +116,21 @@ def random_augmentation(img,
                         zoom_range=(0.8, 1), 
                         shear_chance=0, 
                         shear_range=(-0.5, 0.5),
-                        random_shear=True):
+                        random_shear=True,
+                        color_quantize=True,
+                        target_colors=32):
 
     new_img = np.empty_like(img)
     new_mask = np.empty_like(mask)
 
     for ind in range(img.shape[0]):
+        
+        new_img[ind,:,:,:],new_mask[ind,:,:,:] = __color_quantize__(img[ind], 
+                                                                    mask[ind],
+                                                                    target_colors)
 
-        new_img[ind,:,:,:],new_mask[ind,:,:,:] = __random_flip__(img[ind], 
-                                                                 mask[ind], 
+        new_img[ind,:,:,:],new_mask[ind,:,:,:] = __random_flip__(new_img[ind], 
+                                                                 new_mask[ind], 
                                                                  u=flip_chance)
 
         new_img[ind,:,:,:],new_mask[ind,:,:,:] = __random_rotate__(new_img[ind], 

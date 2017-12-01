@@ -1,6 +1,7 @@
 from keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, Concatenate, Dropout
 from keras.models import Model
-
+import keras.backend as K
+import numpy as np
 
 def __get_conv_layer_with_dropout__(filter_size, input_layer, dropout, mask_shape=(3, 3), dropout_rate=0.2):
     conv2d = Conv2D(filter_size, mask_shape, padding='same', activation='relu')(input_layer)
@@ -10,11 +11,17 @@ def __get_conv_layer_with_dropout__(filter_size, input_layer, dropout, mask_shap
         return conv2d
 
 def dice_coef(y_true, y_pred):
-    intersect = 2 * y_true * y_pred
-    len_true = sqrt(sum((y_true)**2))
-    len_pred = sqrt(sum((y_pred)**2))
-    loss = intersect/(len_true+len_pred)
-    return loss
+    smooth = 1.
+    y_true_f = np.array(y_true).flatten()
+    y_pred_f = np.array(y_pred).flatten()
+    intersection = np.sum(y_true_f * y_pred_f)
+    return (2. * intersection + smooth) / (np.sum(y_true_f) + np.sum(y_pred_f) + smooth)
+   
+    # intersect = 2 * y_true * y_pred
+    # len_true = sqrt(sum((y_true)**2))
+    # len_pred = sqrt(sum((y_pred)**2))
+    # loss = intersect/(len_true+len_pred)
+    # return loss
     
 def get_unet_model(input_shape, dropout=True):
     # Input layer
