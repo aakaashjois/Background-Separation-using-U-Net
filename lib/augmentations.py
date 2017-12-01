@@ -32,8 +32,8 @@ def __zoom__(x, zx, zy, row_axis=0, col_axis=1, channel_axis=2, fill_mode='neare
     x = image.apply_transform(x, transform_matrix, channel_axis, fill_mode, cval)
     return x
 
-def __shear__(x, shear, row_axis=0, col_axis=1, channel_axis=2, fill_mode='nearest', cval=0.):
-    shear_matrix = np.array([[1, -np.sin(shear), 0],
+def __shear__(x, shear, row_axis=0, col_axis=1, channel_axis=2, fill_mode='nearest', cval=0.,rotate_dir=-1):
+    shear_matrix = np.array([[1, rotate_dir*np.sin(shear), 0],
                              [0, np.cos(shear), 0],
                              [0, 0, 1]])
     h, w = x.shape[row_axis], x.shape[col_axis]
@@ -69,11 +69,16 @@ def __random_zoom__(img, mask, zoom_range=(0.8, 1), u=0.5):
         mask = __zoom__(mask, zx, zy)
     return img, mask
 
-def __random_shear__(img, mask, intensity_range=(-0.5, 0.5), u=0.5):
+def __random_shear__(img, mask, intensity_range=(-0.5, 0.5), u=0.5,random_shear=True):
+    shear_rot = 1
+    if random_shear:
+        roll = np.random.uniform(0,1)
+        if roll > 0.5:
+            shear_rot = -1
     if np.random.random() < u:
         sh = np.random.uniform(-intensity_range[0], intensity_range[1])
-        img = __shear__(img, sh)
-        mask = __shear__(mask, sh)
+        img = __shear__(img, sh,rotate_dir = shear_rot)
+        mask = __shear__(mask, sh,rotate_dir = shear_rot)
     return img, mask
 
 def random_augmentation(img, 
@@ -87,7 +92,8 @@ def random_augmentation(img,
                         zoom_chance=0, 
                         zoom_range=(0.8, 1), 
                         shear_chance=0, 
-                        shear_range=(-0.5, 0.5)):
+                        shear_range=(-0.5, 0.5),
+                        random_shear=True):
 
     new_img = np.empty_like(img)
     new_mask = np.empty_like(mask)
@@ -116,6 +122,7 @@ def random_augmentation(img,
 
         new_img[ind,:,:,:],new_mask[ind,:,:,:] = __random_shear__(new_img[ind], 
                                                                   new_mask[ind], 
-                                                                  intensity_range=shear_range, u=shear_chance)
+                                                                  intensity_range=shear_range, u=shear_chance,
+                                                                 random_shear=random_shear)
 
     return new_img, new_mask
