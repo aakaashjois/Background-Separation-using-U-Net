@@ -73,7 +73,7 @@ def __random_zoom__(img, mask, zoom_range=(0.8, 1), u=0.5):
         mask = __zoom__(mask, zx, zy)
     return img, mask
 
-def __random_shear__(img, mask, intensity_range=(-0.5, 0.5), u=0.5,random_shear=True):
+def __random_shear__(img, mask, intensity_range=(-0.5, 0.5), u=0.5, random_shear=True):
     shear_rot = 1
     if random_shear:
         roll = np.random.uniform(0,1)
@@ -85,7 +85,7 @@ def __random_shear__(img, mask, intensity_range=(-0.5, 0.5), u=0.5,random_shear=
         mask = __shear__(mask, sh,rotate_dir = shear_rot)
     return img, mask
 
-def ____recreate_image____(codebook, labels, w, h):
+def __recreate_image__(codebook, labels, w, h):
     d = codebook.shape[1]
     image = np.zeros((w, h, d))
     label_idx = 0
@@ -95,42 +95,36 @@ def ____recreate_image____(codebook, labels, w, h):
             label_idx += 1
     return image
 
-def __color_quantize__(img, mask, target_colors):
+def color_quantize(img, target_colors):
     img = img_to_array(img)
     image_array = np.reshape(img, (img.shape[0] * img.shape[1], img.shape[2]))
     image_array_sample = shuffle(image_array, random_state=0)[:1000]
     kmeans = KMeans(n_clusters=target_colors, random_state=0).fit(image_array_sample)
     labels = kmeans.predict(image_array)
-    return __recreate_image__(kmeans.cluster_centers_, labels, img.shape[0], img.shape[1]), mask
+    return __recreate_image__(kmeans.cluster_centers_, labels, img.shape[0], img.shape[1])
 
 
 def random_augmentation(img, 
                         mask,
-                        flip_chance=0, 
-                        rotate_chance=0,
-                        rotate_limit=(-20,20), 
-                        shift_chance=0, 
-                        shift_limit_w=(-0.1, 0.1), 
-                        shift_limit_h=(-0.1, 0.1),
-                        zoom_chance=0, 
-                        zoom_range=(0.8, 1), 
-                        shear_chance=0, 
-                        shear_range=(-0.5, 0.5),
-                        random_shear=True,
-                        color_quantize=True,
-                        target_colors=32):
+                        flip_chance=0.1, 
+                        rotate_chance=0.1,
+                        rotate_limit=(-10, 10), 
+                        shift_chance=0.1, 
+                        shift_limit_w=(-0.2, 0.2), 
+                        shift_limit_h=(-0.2, 0.2),
+                        zoom_chance=0.1, 
+                        zoom_range=(0.9, 1), 
+                        shear_chance=0.1, 
+                        shear_range=(-0.2, 0.2),
+                        random_shear=True):
 
     new_img = np.empty_like(img)
     new_mask = np.empty_like(mask)
 
     for ind in range(img.shape[0]):
-        
-        new_img[ind,:,:,:],new_mask[ind,:,:,:] = __color_quantize__(img[ind], 
-                                                                    mask[ind],
-                                                                    target_colors)
 
-        new_img[ind,:,:,:],new_mask[ind,:,:,:] = __random_flip__(new_img[ind], 
-                                                                 new_mask[ind], 
+        new_img[ind,:,:,:],new_mask[ind,:,:,:] = __random_flip__(img[ind], 
+                                                                 mask[ind], 
                                                                  u=flip_chance)
 
         new_img[ind,:,:,:],new_mask[ind,:,:,:] = __random_rotate__(new_img[ind], 
