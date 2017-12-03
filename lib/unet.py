@@ -1,5 +1,6 @@
 from keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, Concatenate, Dropout
 from keras.models import Model
+from keras.optimizers import Adam
 import keras.backend as K
 import numpy as np
 
@@ -23,7 +24,7 @@ def dice_coef(y_true, y_pred):
     # loss = intersect/(len_true+len_pred)
     # return loss
     
-def get_unet_model(input_shape, dropout=True):
+def get_unet_model(input_shape, learning_rate, dropout=True, loss='binary_crossentropy'):
     # Input layer
     input_layer = Input(shape=input_shape)
     # Down 1
@@ -70,4 +71,5 @@ def get_unet_model(input_shape, dropout=True):
 
     # Create Model
     model = Model(input_layer, output_layer)
+    model.compile(optimizer=Adam(learning_rate), loss=loss, metrics=[dice_coef])
     return model

@@ -3,16 +3,14 @@ from keras.preprocessing.image import img_to_array, load_img
 from os.path import join
 from lib import augmentations
 
-def image_generator(images_dir, masks_dir, images, masks, batch_size, img_width = None, num_colors = 256):
+def image_generator(images_dir, masks_dir, images, masks, batch_size, img_dim = None, num_colors = 256):
     '''
     images: Array of image names
     masks: Array of mask names
     batch_size: The number of images to be consider in one batch.
     num_colors = target number of colors for kmeans algorithm. (Default = 256)
-    img_width: The width to which the original image is resized while maintaining aspect ratio. Does not resize if no parameters passed.
+    img_dim: #TODO
     '''
-    
-    img_dim = [int((1280 / 1918) * img_width), img_width] if img_width is not None else None
     
     while True:
         random_indices = np.random.choice(len(images), batch_size)
