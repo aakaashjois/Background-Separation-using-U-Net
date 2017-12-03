@@ -157,14 +157,16 @@ def __letter_box__(img,
     if img.shape[1] == img.shape[0]:
         return img, mask
     else:
-        diff1 = int(np.ceil((img.shape[1]-img.shape[0])/2))
-        diff2 = int(np.floor((img.shape[1]-img.shape[0])/2))
-        zero_img1 = np.zeros((diff1,img.shape[1],img.shape[2]))
-        zero_img2 = np.zeros((diff2,img.shape[1],img.shape[2]))
-        img_tmp = np.concatenate((zero_img1,img),axis=0)
-        new_img = np.concatenate((img_tmp, zero_img2),axis=0)
-        mask_tmp = np.concatenate((zero_img1,mask),axis=0)
-        new_mask = np.concatenate((mask_tmp, zero_img2),axis=0)
+        diff1 = int(np.ceil((img.shape[1] - img.shape[0]) / 2))
+        diff2 = int(np.floor((img.shape[1] - img.shape[0]) / 2))
+        zero_img1 = np.zeros((diff1, img.shape[1], img.shape[2]))
+        zero_img2 = np.zeros((diff2, img.shape[1], img.shape[2]))
+        zero_mask1 = np.zeros((diff1, mask.shape[1], mask.shape[2]))
+        zero_mask2 = np.zeros((diff2, mask.shape[1], mask.shape[2]))
+        img_tmp = np.concatenate((zero_img1, img), axis = 0)
+        new_img = np.concatenate((img_tmp, zero_img2), axis = 0)
+        mask_tmp = np.concatenate((zero_mask1, mask), axis = 0)
+        new_mask = np.concatenate((mask_tmp, zero_mask2), axis = 0)
         return new_img, new_mask
     
 def random_augmentation(img, 

@@ -22,11 +22,10 @@ def image_generator(images_dir, masks_dir, images, masks, batch_size, img_dim = 
             img = load_img(join(images_dir, images[index]), target_size = img_dim)
             img_array = img_to_array(img) / 255
             
-            mask = load_img(join(masks_dir, masks[index]), target_size = img_dim)
+            mask = load_img(join(masks_dir, masks[index]), target_size = img_dim, grayscale=True)
             mask_array = img_to_array(mask) / 255
             
             img_array, mask_array = augmentations.random_augmentation(img_array, mask_array)
-            
             i.append(img_array)
             m.append(mask_array)
             
