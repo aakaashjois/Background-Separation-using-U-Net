@@ -1,4 +1,4 @@
-from keras.layers import Input, Conv2D, MaxPooling2D, __up__Sampling2D, Concatenate, Dropout
+from keras.layers import Input, Conv2D, MaxPool2D, UpSampling2D, Concatenate, Dropout
 from keras.models import Model
 from keras.optimizers import Adam
 import keras.backend as K
@@ -14,8 +14,8 @@ def __get_conv_layer_with_dropout__(filter_size, input_layer, dropout, mask_shap
 def dice_coef(y_true, y_pred, smooth=1e-5):
     y_true = K.round(K.reshape(y_true, [-1]))
     y_pred = K.round(K.reshape(y_pred, [-1]))
-    isct = K.reduce_sum(y_true * y_pred)
-    return 2 * isct / (K.reduce_sum(y_true) + K.reduce_sum(y_pred))
+    isct = K.sum(y_true * y_pred)
+    return 2 * isct / (K.sum(y_true) + K.sum(y_pred))
 
 def __down__(input_layer, filters, pool=True):
     conv1 = Conv2D(filters, (3, 3), padding='same', activation='relu')(input_layer)
@@ -28,9 +28,9 @@ def __down__(input_layer, filters, pool=True):
 
 def __up__(input_layer, residual, filters):
     filters=int(filters)
-    __up__sample = __up__Sampling2D()(input_layer)
-    __up__conv = Conv2D(filters, kernel_size=(2, 2), padding="same")(__up__sample)
-    concat = Concatenate(axis=3)([residual, __up__conv])
+    upsample = UpSampling2D()(input_layer)
+    upconv = Conv2D(filters, kernel_size=(2, 2), padding="same")(upsample)
+    concat = Concatenate(axis=3)([residual, upconv])
     conv1 = Conv2D(filters, (3, 3), padding='same', activation='relu')(concat)
     conv2 = Conv2D(filters, (3, 3), padding='same', activation='relu')(conv1)
     return conv2
@@ -85,10 +85,10 @@ def get_unet_model(input_shape, filters = 64):
     # __up__ 4, 128
     u4 = __up__(u3, residual=residuals[-4], filters=filters/2)
 
-    out = Conv2D(filters=1, kernel_size=(1, 1), activation="sigmoid")(__up__4)
+    out = Conv2D(filters=1, kernel_size=(1, 1), activation="sigmoid")(u4)
 
     model = Model(input_layer, out)
-    
+    return model
     
 '''    
 def get_unet_model(input_shape, learning_rate, dropout=True, loss='binary_crossentropy'):
