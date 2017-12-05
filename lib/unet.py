@@ -11,6 +11,9 @@ def __get_conv_layer_with_dropout__(filter_size, input_layer, dropout, mask_shap
     else:
         return conv2d
 
+def lr_schedule(epoch=1, lr = 1.5e-4):
+    return lr/(epoch*0.1 + 1)    
+
 def dice_coef(y_true, y_pred):
     y_true = K.round(K.reshape(y_true, [-1]))
     y_pred = K.round(K.reshape(y_pred, [-1]))
