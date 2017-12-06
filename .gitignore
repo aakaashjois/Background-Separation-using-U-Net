@@ -9,4 +9,6 @@
 
 lib/\.ipynb_checkpoints/
 
+best-fit-model.hdf5
+
 lib/__pycache__/
