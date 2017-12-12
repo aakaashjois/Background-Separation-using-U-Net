@@ -7,7 +7,7 @@ from keras.preprocessing.image import load_img, img_to_array
 
 def __flip__(x):
     """
-    Flips image horizontally.
+    Flips image around vertical axis.
     
     Args:
         x: Array. The input image.
