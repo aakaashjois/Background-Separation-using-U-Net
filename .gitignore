@@ -1,14 +1,6 @@
 # Data directory
 /data
 
-# Jupyter Notebook checkpoints
-/.ipynb_checkpoints
-
-# Mac finder data
-.DS_Store
-
-lib/\.ipynb_checkpoints/
-
-best-fit-model.hdf5
-
-lib/__pycache__/
+#OS files
+[Tt]humbs.db
+*.DS_Store
