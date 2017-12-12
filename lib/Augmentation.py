@@ -171,20 +171,19 @@ def __letter_box__(img,
     
 def random_augmentation(img, 
                         mask,
-                        flip_chance = 0.2, 
-                        rotate_chance = 0.2,
+                        flip_chance = 0.1, 
+                        rotate_chance = 0.1,
                         rotate_limit = (-15, 15), 
-                        shift_chance = 0.2, 
+                        shift_chance = 0.1, 
                         shift_limit_w = (-0.5, 0.5), 
                         shift_limit_h = (-0.5, 0.5),
-                        zoom_chance = 0.2, 
+                        zoom_chance = 0.1, 
                         zoom_range = (0.8, 1), 
-                        shear_chance = 0.2, 
+                        shear_chance = 0.1, 
                         shear_range = (-0.3, 0.3),
                         random_shear = True,
                         color_quantize = True,
-                        target_colors = 8,
-                        letter_box = True):
+                        target_colors = 8):
     new_img = np.copy(img)
     new_mask = np.copy(mask)
     
@@ -218,7 +217,5 @@ def random_augmentation(img,
                                              intensity_range = shear_range, 
                                              u = shear_chance,
                                              random_shear = random_shear)
-    if(letter_box):
-        new_img, new_mask = __letter_box__(img, 
-                                           mask)
+    new_img, new_mask = __letter_box__(img, mask)
     return new_img, new_mask
