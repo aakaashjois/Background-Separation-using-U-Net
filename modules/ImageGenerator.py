@@ -3,7 +3,7 @@ from os import listdir, getcwd, chdir
 from os.path import join
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import img_to_array, load_img
-from lib import Augmentation
+from modules import ImageAugmentation
 
 def __image_generator__(images_dir,
                         masks_dir, 
@@ -28,10 +28,10 @@ def __image_generator__(images_dir,
             mask_array = img_to_array(mask) / 255
             
             if(augment):
-                img_array, mask_array = Augmentation.random_augmentation(img_array,
+                img_array, mask_array = ImageAugmentation.random_augmentation(img_array,
                                                                           mask_array)
             else:
-                img_array, mask_array = Augmentation.random_augmentation(img_array,
+                img_array, mask_array = ImageAugmentation.random_augmentation(img_array,
                                                                           mask_array,
                                                                           flip_chance = 0.0, 
                                                                           rotate_chance = 0.0,

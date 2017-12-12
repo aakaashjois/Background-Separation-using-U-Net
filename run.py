@@ -1,13 +1,13 @@
 import pickle
 import time
 import numpy as np
-from lib import Unet
-from lib import Generator
+from modules import UNetModel
+from modules import ImageGenerator
 
 
 def run_neural_net(img_width):
-    trn_gen, val_gen, tst_gen = Generator.get_generators(img_width)
-    model, callbacks = Unet.get_unet_model(img_width)
+    trn_gen, val_gen, tst_gen = ImageGenerator.get_generators(img_width)
+    model, callbacks = UNetModel.get_unet_model(img_width)
     num_epochs = 10
     print('Training initialized\n')
     start = time.time()
