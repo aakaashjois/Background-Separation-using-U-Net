@@ -62,8 +62,7 @@ def __create_unet_model__(input_shape, filters = 64):
 
     out = Conv2D(filters = 1, kernel_size = (1, 1), activation = 'sigmoid')(u4)
 
-    model = Model(input_layer, out)
-    return model
+    return Model(input_layer, out)
 
 def get_unet_model(img_width):
     model = __create_unet_model__([img_width, img_width, 3])
