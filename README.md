@@ -1,25 +1,26 @@
 # Background-Separation-using-U-Net
+
 Using a U-Net model to perform Image Segmentation on Carvana Image Masking Challenge Dataset
 
 ### If Python 3 is not default on the system, then replace all `pip` with `pip3` and `python` with `python3`
 
 ## Setup
 
-This project requires Python 3 to be installed on the machine. The python libraries needed are in the `requirements.txt` file.
+This project requires Python 3 to be installed. The python libraries needed are in the [`requirements.txt`](./requirements.txt) file.
 They can be installed using `pip`.
 
-`tensorflow-gpu` is the default library. In case a compatible GPU is not available, change `tensorflow-gpu` to `tensorflow` in `requirements.txt` before installing using `pip`.
+`tensorflow-gpu` is the default library. In case a compatible GPU is not available, change `tensorflow-gpu` to `tensorflow` in [`requirements.txt`](./requirements.txt) before installing using `pip`.
 
 The following command can be used to install all the dependencies.
 ````
 pip install requirements.txt
 ````
 
-Once the dependencies are installed, the image data needs to be downloaded. The instructions are available in the `data` folder.
+Once the dependencies are installed, the image data needs to be downloaded. The instructions to download the images are available in the respective folders in [`data`](./data) folder.
 
 ## Run
 
-The file `run.py` can be run using the following command.
+The file [`run.py`](./run.py) can be run using the following command.
 ```
 python run.py
 ````
@@ -30,4 +31,12 @@ The model can be loaded using Keras to further improve or for making predictions
 
 ## Report
 
-The report of this project can be found in the `report` folder.
+The report of this project is available [here](./report/report.pdf).
+
+## License
+
+This project is licensed under Apache License 2.0. The details can be found [here](./LICENSE).
+
+## Credits
+
+All the contributions to this project is made by [Aakaash Jois](https://github.com/aakaashjois) and [Alp Aygar](https://github.com/alpombeo).
