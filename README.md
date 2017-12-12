@@ -2,12 +2,13 @@
 
 Using a U-Net model to perform Image Segmentation on Carvana Image Masking Challenge Dataset
 
-### If Python 3 is not default on the system, then replace all `pip` with `pip3` and `python` with `python3`
-
 ## Setup
 
-This project requires Python 3 to be installed. The python libraries needed are in the [`requirements.txt`](./requirements.txt) file.
-They can be installed using `pip`.
+This project requires Python 3 to be installed. 
+
+### If Python 3 is not default on the system, replace all `pip` with `pip3` and `python` with `python3`
+
+The python libraries needed are in the [`requirements.txt`](./requirements.txt) file. They can be installed using `pip`.
 
 `tensorflow-gpu` is the default library. In case a compatible GPU is not available, change `tensorflow-gpu` to `tensorflow` in [`requirements.txt`](./requirements.txt) before installing using `pip`.
 
