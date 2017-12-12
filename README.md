@@ -15,6 +15,8 @@ The following command can be used to install all the dependencies.
 pip install requirements.txt
 ````
 
+Once the dependencies are installed, the image data needs to be downloaded. The instructions are available in the `data` folder.
+
 ## Run
 
 The file `run.py` can be run using the following command.
