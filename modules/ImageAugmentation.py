@@ -5,77 +5,111 @@ from keras.preprocessing import image
 from keras.preprocessing.image import load_img, img_to_array
 
 
-def __flip__(x, 
-             axis = 1):
-    return np.flip(x, 1)
+def __flip__(x):
+    """
+    Flips image horizontally.
+    
+    Args:
+        x: Array. The input image.
+    
+    Returns:
+        The flipped image.
+    """
+    return np.flip(x, axis = 1)
 
 def __rotate__(x, 
-               theta, 
-               row_axis = 0,
-               col_axis = 1,
-               channel_axis = 2, 
-               fill_mode = 'nearest',
-               cval = 0.):
+               theta):
+    """
+    Rotates the image.
+    
+    Args:
+        x: Array. The input image.
+        theta: Float. The rotation angle.
+    
+    Returns:
+        The rotated image.
+    """
     rotation_matrix = np.array([[np.cos(theta), -np.sin(theta), 0],
                                 [np.sin(theta), np.cos(theta), 0],
                                 [0, 0, 1]])
-    h, w = x.shape[row_axis], x.shape[col_axis]
-    transform_matrix = image.transform_matrix_offset_center(rotation_matrix, h, w)
-    x = image.apply_transform(x, transform_matrix, channel_axis, fill_mode, cval)
-    return x
+    transform_matrix = image.transform_matrix_offset_center(rotation_matrix, x.shape[0], x.shape[1])
+    return image.apply_transform(x, transform_matrix, 2, 'nearest', 0.0)
 
 def __shift__(x, 
               wshift,
-              hshift, 
-              row_axis = 0,
-              col_axis = 1, 
-              channel_axis = 2, 
-              fill_mode = 'nearest',
-              cval = 0.):
-    h, w = x.shape[row_axis], x.shape[col_axis]
-    tx = hshift * h
-    ty = wshift * w
+              hshift):
+    """
+    Shift the image.
+    
+    Args:
+        x: Array. The input image.
+        wshift: Float. The amount of horizontal shift.
+        hshift: Float. The amount of vertical shift.
+    
+    Returns:
+        The shifted image.
+    """
+    tx = hshift * x.shape[0]
+    ty = wshift * x.shape[1]
     translation_matrix = np.array([[1, 0, tx],
                                    [0, 1, ty],
                                    [0, 0, 1]])
-    x = image.apply_transform(x, translation_matrix, channel_axis, fill_mode, cval)
-    return x
+    return image.apply_transform(x, translation_matrix, 2, 'nearest', 0.0)
 
 def __zoom__(x,
              zx, 
-             zy, 
-             row_axis = 0,
-             col_axis = 1, 
-             channel_axis = 2, 
-             fill_mode = 'nearest',
-             cval = 0.):
+             zy):
+    """
+    Zoom into the image.
+    
+    Args:
+        x: Array. The input image.
+        zx: Float. The amount of zoom on the horizontal axis.
+        zy: Float. The amount of zoom on the vertical axis.
+        
+    Returns:
+        The zoomed image.
+    """
     zoom_matrix = np.array([[zx, 0, 0],
                             [0, zy, 0],
                             [0, 0, 1]])
-    h, w = x.shape[row_axis], x.shape[col_axis]
-    transform_matrix = image.transform_matrix_offset_center(zoom_matrix, h, w)
-    x = image.apply_transform(x, transform_matrix, channel_axis, fill_mode, cval)
-    return x
+    transform_matrix = image.transform_matrix_offset_center(zoom_matrix, x.shape[0], x.shape[1])
+    return image.apply_transform(x, transform_matrix, 2, 'nearest', 0.0)
 
 def __shear__(x, 
-              shear, 
-              row_axis = 0, 
-              col_axis = 1,
-              channel_axis = 2, 
-              fill_mode = 'nearest',
-              cval = 0., 
-              rotate_dir = -1):
+              shear,
+              rotate_dir):
+    """
+    Shear the image.
+    
+    Args:
+        x: Array. The input image.
+        shear: Float. The amount of shear.
+        rotate_dir: Integer. The direction of rotation. Takes value of either -1 or 1.
+    
+    Returns:
+        The sheared image.
+    """
     shear_matrix = np.array([[1, rotate_dir * np.sin(shear), 0],
                              [0, np.cos(shear), 0],
                              [0, 0, 1]])
-    h, w = x.shape[row_axis], x.shape[col_axis]
-    transform_matrix = image.transform_matrix_offset_center(shear_matrix, h, w)
-    x = image.apply_transform(x, transform_matrix, channel_axis, fill_mode, cval)
-    return x
+    transform_matrix = image.transform_matrix_offset_center(shear_matrix, x.shape[0], x.shape[1])
+    return image.apply_transform(x, transform_matrix, 2, 'nearest', 0.0)
 
 def __random_flip__(img,
                     mask, 
-                    u = 0.5):
+                    u):
+    """
+    Perform random flip on images.
+    
+    Args:
+        img: Array. The input image.
+        mask: Array. The input mask.
+        u: Float. The probability of application of this augmentation.
+    
+    Returns:
+        A tuple of flipped image and mask.
+    """
     if np.random.random() < u:
         img = __flip__(img, 1)
         mask = __flip__(mask, 1)
@@ -83,8 +117,20 @@ def __random_flip__(img,
 
 def __random_rotate__(img,
                       mask,
-                      rotate_limit = (-20, 20), 
-                      u = 0.5):
+                      rotate_limit, 
+                      u):
+    """
+    Perform random rotation on images.
+    
+    Args:
+        img: Array. The input image.
+        mask: Array. The input mask.
+        rotate_limit: Tuple (min limit, max limit). The mimimum and maximum angle of rotation allowed in degrees.
+        u: Float. The probability of application of this augmentation.
+    
+    Returns:
+        A tuple of rotated image and mask.
+    """
     if np.random.random() < u:
         theta = np.pi / 180 * np.random.uniform(rotate_limit[0], rotate_limit[1])
         img = __rotate__(img, theta)
@@ -93,9 +139,22 @@ def __random_rotate__(img,
 
 def __random_shift__(img,
                      mask,
-                     w_limit = (-0.1, 0.1),
-                     h_limit = (-0.1, 0.1),
-                     u = 0.5):
+                     w_limit,
+                     h_limit,
+                     u):
+    """
+    Perform random pixel shift on the images.
+    
+    Args:
+        img: Array. The input image.
+        mask: Array. The input mask.
+        w_limit: Tuple (min limit, max limit). The minimum and maximum percentage of horizontal shift.
+        h_limit: Tuple (min limit, max limit). The minimum and maximum percentage of vertical shift.
+        u: Float. The probability of application of this augmentation.
+        
+    Returns:
+        A tuple of pixel shifted image and mask.
+    """
     if np.random.random() < u:
         wshift = np.random.uniform(w_limit[0], w_limit[1])
         hshift = np.random.uniform(h_limit[0], h_limit[1])
@@ -105,8 +164,20 @@ def __random_shift__(img,
 
 def __random_zoom__(img, 
                     mask, 
-                    zoom_range = (0.8, 1),
-                    u = 0.5):
+                    zoom_range,
+                    u):
+    """
+    Perform random zoom on the images.
+    
+    Args:
+        img: Array. The input image.
+        mask: Array. The input mask.
+        zoom_range: Tuple (min limit, max limit). The minimum and maximum limit of the zoom range.
+        u: Float. The probability of application of this augmentation.
+        
+    Returns:
+        A tuple of zoomed image and mask.
+    """
     if np.random.random() < u:
         zx, zy = np.random.uniform(zoom_range[0], zoom_range[1], 2)
         img = __zoom__(img, zx, zy)
@@ -115,13 +186,25 @@ def __random_zoom__(img,
 
 def __random_shear__(img, 
                      mask, 
-                     intensity_range = (-0.5, 0.5), 
-                     u = 0.5, 
-                     random_shear = True):
+                     intensity_range, 
+                     random_shear,
+                     u):
+    """
+    Perform random zoom on the images.
+    
+    Args:
+        img: Array. The input image.
+        mask: Array. The input mask.
+        intensity_range: Tuple (min limit, max limit). The minimum and maximum limit of shear intensity.
+        random_shear: Boolean. Whether to apply random sheer rotation.
+        u: Float. The probability of application of this augmentation.
+        
+    Returns:
+        A tuple of sheared image and mask.
+    """
     shear_rot = 1
     if random_shear:
-        roll = np.random.uniform(0, 1)
-        if roll > 0.5:
+        if np.random.uniform(0, 1) > 0.5:
             shear_rot = -1
     if np.random.random() < u:
         sh = np.random.uniform(- intensity_range[0], intensity_range[1])
@@ -129,31 +212,45 @@ def __random_shear__(img,
         mask = __shear__(mask, sh, rotate_dir = shear_rot)
     return img, mask
 
-def __recreate_image__(codebook, 
-                       labels,
-                       w,
-                       h):
-    d = codebook.shape[1]
-    image = np.zeros((w, h, d))
-    label_idx = 0
-    for i in range(w):
-        for j in range(h):
-            image[i][j] = codebook[labels[label_idx]]
-            label_idx += 1
-    return image
-
 def __color_quantize__(img,
                        mask,
                        target_colors):
+    """
+    Perform K-Means clustering to cluster colors on the input image.
+    
+    Args:
+        img: Array. The input image.
+        mask: Array. The input mask.
+        target_colors: Integer. The number of clusters of colors.
+        
+    Returns:
+        A tuple of color quantized image and mask.
+    """
     img = img_to_array(img)
     image_array = np.reshape(img, (img.shape[0] * img.shape[1], img.shape[2]))
     image_array_sample = shuffle(image_array, random_state=0)[:1000]
     kmeans = KMeans(n_clusters=target_colors, random_state=0).fit(image_array_sample)
     labels = kmeans.predict(image_array)
-    return __recreate_image__(kmeans.cluster_centers_, labels, img.shape[0], img.shape[1]), mask
+    image = np.zeros((img.shape[0], img.shape[1], kmeans.cluster_centers_.shape[1]))
+    label_idx = 0
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            image[i][j] = kmeans.cluster_centers_[labels[label_idx]]
+            label_idx += 1
+    return image, mask
 
 def __letter_box__(img,
                    mask):
+    """
+    Performs letter boxing on the images.
+    
+    Args:
+        img: Array. The input image.
+        mask: Array. The input mask.
+        
+    Returns:
+        A tuple of letter boxed image and mask.
+    """
     if img.shape[1] == img.shape[0]:
         return img, mask
     else:
@@ -184,6 +281,29 @@ def random_augmentation(img,
                         random_shear = True,
                         color_quantize = True,
                         target_colors = 8):
+    """
+    Perform random augmentations on the input images.
+    
+    Args:
+        img: Array. The input image.
+        mask: Array. The input mask.
+        flip_chance: Float. The probability of application of flip augmentation.
+        rotate_chance: Float. The probability of application of rotate augmentation.
+        rotate_limit: Tuple (min limit, max limit). The mimimum and maximum angle of rotation allowed.
+        shift_chance: Float. The probability of application of shift augmentation.
+        shift_limit_w: Tuple (min limit, max limit). The minimum and maximum percentage of horizontal shift.
+        shift_limit_h: Tuple (min limit, max limit). The minimum and maximum percentage of vertical shift.
+        zoom_chance: Float. The probability of application of zoom augmentation.
+        zoom_range: Tuple (min limit, max limit). The minimum and maximum limit of the zoom range.
+        shear_chance: Float. The probability of application of sheer augmentation.
+        shear_range: Tuple (min limit, max limit). The minimum and maximum limit of shear intensity.
+        random_shear: Boolean. Whether to apply random sheer rotation.
+        color_quantize: Boolean. Whether to apply color quantization.
+        target_colors: Integer. The number of clusters of colors.
+    
+    Returns:
+        A tuple of randomly augmented image and mask.
+    """
     new_img = np.copy(img)
     new_mask = np.copy(mask)
     

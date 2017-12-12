@@ -14,7 +14,7 @@ def __image_generator__(images_dir,
                         num_colors,
                         img_dim):
     """
-    Private method to create image generator.
+    Creates image generator.
     
     Args:
         images_dir: String. The path pointing to directory containing the images.

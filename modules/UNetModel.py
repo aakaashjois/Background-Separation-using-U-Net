@@ -7,7 +7,7 @@ import keras.backend as K
 
 def __down__(input_layer, filters, pool = True):
     """
-    Private method to perform downward propogation in the U-Net architecture.
+    Performs downward propogation in the U-Net architecture.
     
     Args:
         input_layer: Keras Layer. The layer to take as input for the current layer.
@@ -27,7 +27,7 @@ def __down__(input_layer, filters, pool = True):
 
 def __up__(input_layer, residual, filters):
     """
-    Private method to perform upward propogration in the U-Net architecture.
+    Performs upward propogration in the U-Net architecture.
     
     Args:
         input_layer: Keras Layer. The layer to take as input for the current layer.
@@ -47,7 +47,7 @@ def __up__(input_layer, residual, filters):
 
 def __create_unet_model__(input_shape, filters = 64):
     """
-    Private method to create the U-Net model.
+    Creates the U-Net model.
     
     Args:
         input_shape: List. The shape of the input image
