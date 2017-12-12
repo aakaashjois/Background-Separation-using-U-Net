@@ -10,10 +10,25 @@ def __image_generator__(images_dir,
                         images, 
                         masks,
                         batch_size,
-                        num_colors,
                         augment,
-                        img_dim = None):
+                        num_colors,
+                        img_dim):
+    """
+    Private method to create image generator.
     
+    Args:
+        images_dir: String. The path pointing to directory containing the images.
+        masks_dir: String. The path pointing to directory containing the masks.
+        images: List. A list of image names.
+        masks: List. A list of mask names.
+        batch_size: Integer. The number of images to use in each batch.
+        augment: Boolean. Perform image augmentation methods on original image.
+        num_colors: Integer. The number of colors to which the original image is quantized.
+        img_dim: List. A list containing the shape to which original image should be resized.
+    
+    Returns:
+        A tuple of arrays size batch_size. One array is for images and one for masks.  
+    """
     while True:
         random_indices = np.random.choice(len(images), batch_size)
         i = []
@@ -47,9 +62,21 @@ def __image_generator__(images_dir,
 def get_generators(img_width,
                    aspect_ratio = 1280 / 1918,
                    batch_size = 2,
-                   num_colors = 8,
-                   augment = True):
-
+                   augment = True,
+                   num_colors = 8):
+    """
+    Creates generators for training, validation and testing images and returns them.
+    
+    Args:
+        img_width: Integer. The width to which the original image is scaled.
+        aspect_ratio: Float. The aspect ratio of the original image. (Default: 1280 / 1918)
+        batch_size: Integer. The number of images to use in each batch. (Default: 2)
+        augment: Boolean. Perform image augmentation methods on original image for training images. (Default: True) 
+        num_colors: Integer. The number of colors to which the original image is quantized. (Default: 8)
+    
+    Returns:
+        A tuple of generators for training, validation and testing data.
+    """
     data_dir = join(getcwd(), 'data')
     train_dir = join(data_dir, 'train')
     mask_dir = join(data_dir, 'train_masks')
