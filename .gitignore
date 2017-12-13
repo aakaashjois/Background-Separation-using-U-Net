@@ -1,5 +1,6 @@
 # Data directory
-/data
+/data/train/*.jpg
+/data/train_masks/*.gif
 
 #OS files
 [Tt]humbs.db
